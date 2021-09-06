@@ -10,6 +10,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Random;
 
 import javax.swing.JPanel;
@@ -74,6 +78,20 @@ public class GamePanel extends JPanel implements ActionListener {
 		g.setFont(new Font("Elephant", Font.PLAIN, 20));
 		FontMetrics metrics = getFontMetrics(g.getFont());
 		g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Score: " + applesEaten)) / 2, 40);
+	}
+	
+	public void saveScoreBoard() {
+		try {
+		File saveFile = new File("src/Scores.txt");
+		if (!saveFile.exists()) saveFile.createNewFile();
+		FileWriter writer = new FileWriter(saveFile, true);
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		writer.append(applesEaten + " apples on " + timestamp + "\n");
+		writer.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void drawNewApple() {
@@ -151,6 +169,7 @@ public class GamePanel extends JPanel implements ActionListener {
 		FontMetrics metrics = getFontMetrics(g.getFont());
 		g.drawString("GAME OVER", (SCREEN_WIDTH - metrics.stringWidth("GAME OVER")) / 2, SCREEN_HEIGHT / 2);
 		drawScoreBoard(g);
+		saveScoreBoard();
 		continueButton = new Button("Continue");
 		this.add(continueButton);
 		continueButton.setFont(new Font("Elephant", Font.PLAIN, SCREEN_WIDTH / 20));
